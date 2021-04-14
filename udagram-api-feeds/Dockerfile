@@ -1,0 +1,43 @@
+# Use NodeJS base image
+FROM node:12
+
+ARG POSTGRES_HOST
+ARG POSTGRES_USERNAME
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
+ARG AWS_REGION
+ARG AWS_PROFILE
+ARG AWS_BUCKET
+ARG URL
+ARG JWT_SECRET
+
+# Create app directory
+WORKDIR /usr/src/app
+
+ENV POSTGRES_HOST=$POSTGRES_HOST
+ENV POSTGRES_USERNAME=$POSTGRES_USERNAME
+ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+ENV POSTGRES_DB=$POSTGRES_DB
+ENV POSTGRES_HOST=$POSTGRES_HOST
+ENV AWS_REGION=$AWS_REGION
+ENV AWS_PROFILE=$AWS_PROFILE
+ENV AWS_BUCKET=$AWS_BUCKET
+ENV URL=$URL
+ENV JWT_SECRET=$JWT_SECRET
+
+# Install app dependencies by copying
+# package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy app source
+COPY . .
+
+# Bind the port that the image will run on
+EXPOSE 8080
+
+# Define the Docker image's behavior at runtime
+CMD ["npm", "run", "dev"]

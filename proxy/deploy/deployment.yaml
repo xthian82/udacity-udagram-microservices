@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: udagram-api
+  name: udagram-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        service: udagram-api
+    spec:
+      containers:
+      - image: xthian82/udagram-api
+        name: udagram-api
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 3
+        periodSeconds: 3
+      restartPolicy: Always
+
+

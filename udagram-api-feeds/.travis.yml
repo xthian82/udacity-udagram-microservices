@@ -1,0 +1,45 @@
+language: node_js
+node_js:
+  - 13
+
+services:
+  - docker
+
+# Pre-testing install
+install:
+  - echo "nothing needs to be installed"
+
+# Scripts to be run
+before_script:
+  - echo "no tests"
+
+script:
+  - docker --version
+  - docker build -t udagram-api-feeds --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} \
+    --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+    --build-arg POSTGRES_DB=${POSTGRES_DB} \
+    --build-arg POSTGRES_HOST=${POSTGRES_HOST} \
+    --build-arg AWS_REGION=${AWS_REGION} \
+    --build-arg AWS_PROFILE=${AWS_PROFILE} \
+    --build-arg AWS_BUCKET=${AWS_BUCKET} \
+    --build-arg URL=${URL} \
+    --build-arg JWT_SECRET=${JWT_SECRET} .
+  - docker tag udagram-api-feeds xthian82/udagram-api-feeds
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push xthian82/udagram-api-feeds
+
+
+  'username': process.env.POSTGRES_USERNAME,
+  'password': process.env.POSTGRES_PASSWORD,
+  'database': process.env.POSTGRES_DB,
+  'host': process.env.POSTGRES_HOST,
+  'dialect': 'postgres',
+  'aws_region': process.env.AWS_REGION,
+  'aws_profile': process.env.AWS_PROFILE,
+  'aws_media_bucket': process.env.AWS_BUCKET,
+  'url': process.env.URL,
+  'jwt': {
+    'secret': process.env.JWT_SECRET,
+  },

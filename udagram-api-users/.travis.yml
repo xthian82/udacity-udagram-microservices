@@ -1,0 +1,23 @@
+# language: node_js
+# node_js:
+#  - 13
+
+services:
+  - docker
+
+# Pre-testing install
+install:
+  - echo "nothing needs to be installed"
+
+# Scripts to be run
+before_script:
+  - echo "no tests"
+
+script:
+  - docker --version
+  - docker build -t udagram-api-users --build-arg POSTGRES_USERNAME=${POSTGRES_USERNAME} --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD} --build-arg POSTGRES_DB=${POSTGRES_DB} --build-arg POSTGRES_HOST=${POSTGRES_HOST} --build-arg AWS_REGION=${AWS_REGION} --build-arg AWS_PROFILE=${AWS_PROFILE} --build-arg AWS_BUCKET=${AWS_BUCKET} --build-arg URL=${URL} --build-arg JWT_SECRET=${JWT_SECRET} .
+  - docker tag udagram-api-users xthian82/udagram-api-users
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push xthian82/udagram-api-users
